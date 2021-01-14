@@ -1,6 +1,8 @@
-# hw9-nina-steph-anna
+# The Opiate Crisis Across Massachusetts
 
-This is a final project for CS 465 Information Visualization at Middlebury College, by Nina Sonneborn, Anna Novak, and Steph Jordan. It explores the opioid epidemic in Massachusetts.
+This is a fall 2018 final project for CS 465 Information Visualization at Middlebury College, by Nina Sonneborn, Anna Novak, and Steph Jordan. It explores the opioid epidemic in Massachusetts with D3 charts and maps. 
+
+View the project here: https://amnovak.github.io/ma-opiate-crisis/
 
 ## Files
   +  `index.html` main webpage
