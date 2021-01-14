@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<!-- todo
+
+
+
+nina: cleanup javascript
+
+doc explaining visual choices
+
+
+rogue town
+
+-->
+
+<head>
+    <meta charset="UTF-8">
+    <title>Opioid Deaths MA</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://unpkg.com/topojson@3"></script>
+    <script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+    <script src="index.js"></script>
+    <style type="text/css">
+    p, h3, h1, h2, h4{
+      font-family:Helvetica;
+    }
+
+    #mapTooltip{
+      position:absolute;
+      width:150px;
+      height:auto;
+      padding:10px;
+      background-color: white;
+      border-radius:10px;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+      pointer-events: none;
+    }
+
+    #mapTooltip p{
+      margin:0;
+      font-family: sans-serif;
+      font-size:12px;
+    }
+
+    #mapTooltip.hidden{
+    display:none;
+    }
+
+    #county-layer .active{
+      display: none;
+    }
+
+    #tooltip{
+      position:absolute;
+      width:150px;
+      height:auto;
+      padding:10px;
+      background-color: white;
+      border-radius:10px;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+      pointer-events: none;
+    }
+
+    #tooltip p{
+      margin:0;
+      font-family: sans-serif;
+      font-size:12px;
+    }
+
+    #tooltip.hidden{
+    display:none;
+    }
+    #tooltipCityMap{
+      position:absolute;
+      width:150px;
+      height:auto;
+      padding:10px;
+      background-color: white;
+      border-radius:10px;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+      pointer-events: none;
+    }
+
+    #tooltipCityMap p{
+      margin:0;
+      font-family: sans-serif;
+      font-size:12px;
+    }
+
+    #tooltipCityMap.hidden{
+      display:none;
+    }
+    #tooltipSteph{
+      position:absolute;
+      width:150px;
+      height:auto;
+      padding:10px;
+      background-color: white;
+      border-radius:10px;
+      box-shadow: 4px 4px 10px rgba(0,0,0,0.4);
+      pointer-events: none;
+    }
+
+    #tooltipSteph p{
+      margin:0;
+      font-family: sans-serif;
+      font-size:12px;
+    }
+
+    #tooltipSteph.hidden{
+      display:none;
+    }
+
+    </style>
+</head>
+
+<body>
+    <h1 style="text-align: center;">The Opiate Crisis Across Massachusetts:</h1>
+    <h2 style="text-align: center;">An Analysis of Progress and Targeted Populations</h2>
+    <h4 style="text-align: center;"> <i>Nina Sonneborn, Steph Jordan, and Anna Novak </i></h4>
+    <div id="intro">
+      <h3>Background</h3>
+      <p style="width:900px;">In the late 1990s, before much research explicated the addictive nature of opiates,
+        physicians began prescribing them for pain relief at increasingly high rates.
+        The dissemination of these drugs into the population on a large scale quickly led to their abuse, and in 2017,
+        the U.S. Department of Health and Human Services declared a public health emergency.
+      </p>
+        <br>
+          <br>
+            <br>
+        <img
+        src ="https://scd.france24.com/en/files/imagecache/home_1024/article/image/27082017_opioid_crisis.jpg" height="360" width="640"
+        style='display: block; margin-left: auto;margin-right: auto;width: 50%;'>
+      </img>
+      <p style='display: block; margin-left: auto;margin-right: auto;width: 50%; font-size:80%;'>
+        "Sarah Wilson joins other recovering drug users, activists and social service providers at a rally calling for "bolder political action" in combating the overdose epidemic on August 17, 2017 in New York City." Source: www.france24.com
+      </p>
+
+      <h3>Massachusetts</h3>
+      <p>
+        Massachusetts has been at the forefront of addressing this crisis, given that it experienced a fourfold increase overdose rates between 2015 and 2000.
+        In May of 2018, Massachusetts Senator Ed Markey introduced bipartisan legislature,
+        <a href="https://www.congress.gov/bill/115th-congress/senate-bill/2931/text?format=txt"><b>the National Milestones to Measure Progress in Ending the Opioid Epidemic Act</b></a>, marking the opiate abuse as one of the state’s most pressing crises.
+        According to Markey:<br>
+        <p> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+           <i>“The terrorist threat families in America see is not in the streets of Aleppo. It’s fentanyl coming down your street.”</i></p>
+    </div>
+    <hr>
+    <div>
+        <h3>Who is affected?</h3>
+        <p style="width:900px;">According to the American Association of Nurse Anesthetists, as of October 2018, “overdose is the leading cause of death for people under 50.” Click on the button below to see how opioid-related deaths distribute across demographics.
+    </div>
+    <div style="width:900px;">
+      <svg id="vis1"></svg>
+      <div id="vis1_text" style="width:500px; float:right;">
+        <p id="vis1_caption" >
+          Between January and September of 2018, there were <b>1,233</b> opioid-related overdose deaths.
+          <br>
+          <span style="background-color: lightgray;">&nbsp; &nbsp;&nbsp;</span> 1 square = 1 death <span style="width:10px;"></span>
+          <br>
+          Click through to explore the demographic breakdown.
+        </p>
+        <button id="vis1_next">Next</button>
+      </div>
+    </div>
+    <hr>
+    <div>
+        <h3>County by County Over Time </h3>
+        <p style="width:900px;">Action has not only taken place at the state level, but also at the individual county level.
+          Namely, Greenfield, a small town in Franklin County, was highlighted at the national stage for
+          its innovative rehabilitation practices for recovering opioid addicts.
+          In the Vox article "<a href="https://www.ozy.com/fast-forward/can-this-small-town-lead-america-in-fighting-the-opioid-crisis/85534"><i>Can this small town lead America in fighting the opiate crisis</i></a>,"
+          Greenfield was hailed for introducing the Franklin County jail’s Farm and Food Systems program,
+          in which inmates have access to organic gardening classes and vocational training that enables them to enter the food industry once they are released.<br>
+          <br>
+          Mouseover the lines in the plot below to see how different counties are affected by opiod overdoses over the years.
+
+    </div>
+    <div style="width:1100px;">
+      <div style="float:right;">
+          <input id="controls" type="checkbox" name="layer" value="point-layer" > Size lines by Population</li>
+      </div>
+      <svg id="vis2" style="float:left;"></svg>
+      <svg id="key"style="width:100px;height:310px;" ></svg>
+
+    </div>
+    <div>
+      <br>
+      <p style="width:900px;">
+        <br><br>
+
+        The overdose rate seems to be on the verge of a downward trend starting in 2016, but the strength of this trend is difficult to estimate given that we have only one year’s worth of data post 2016.
+        However, after the rapid overdose increase from 2000 to 2015,
+        Governor Charlie Baker signed Chapter 55 of the Acts of 2015 into law. Chapter 55 <a href="https://chapter55.digital.mass.gov/"> "permits the analysis of different government datasets to guide policy decisions and to better understand the opioid epidemic.” </a>
+        This could have been one of the driving forces of the downward trajectory from 2016 to 2017.
+      </p>
+    </div>
+    <div id="tooltipSteph" class="hidden">
+
+      <p>
+        Name: <span id="nameSteph"></span><br />
+
+        Population: <span id="popSteph"></span><br />
+      </p>
+    </div>
+
+    <br>
+    <hr>
+    <h3>Prescriptions</h3>
+    <div style="width:900px;">
+        <svg id="vis3"></svg>
+        <p style="width:380px; float:right;">
+          We noticed that all counties, even Franklin County, despite its unprecedented efforts, experienced an overall increase in overdoses per capita from 2000 to 2016.
+          Is this simply due to the inefficacy of treatment programs and regulation of opiates, or is there a correlation between the amount prescribed and the amount abused?
+          <br>
+          <br>
+
+          We ran a regression to determine the relationship between prescription amounts and overdoses.
+          <br>
+          <br>
+          The regression outputted an R-Squared of 91% and a p-value of 0.001,
+          indicating a strong positive correlation between prescriptions and overdoses.
+        </p>
+    </div>
+    <hr>
+    <div>
+      <h3> Trouble in Eastern Massachusetts </h3>
+      <p style="width:900px;">
+        This map shows Massachusetts counties colored by total opioid-related deaths per capita between 2013 and 2017. Eastern counties generally have higher rates of opioid-related deaths.
+        This could suggest that the opiate crisis affects more populated areas more than rural areas...
+
+        <br>
+        To explore the relationship within each county's cities, click on a county to see how deaths per capita has changed from 2013 to 2017.
+      </p>
+    </div>
+    <div id="legend" >
+      <p id="title" style="width:20px;">DeathsPerCapita</p>
+      <svg id="gradient_bar" height=20 width=400></svg>
+      <div id="gradient_vals" style="width:400px;">
+        <div id="grad_val1" style="width:33.3%; float:left;"></div>
+        <div id="grad_val2" style="width:33.3%; float:left;"></div>
+        <div id="grad_val3" style="width:33.3%; float:left;"></div>
+      </div>
+    </div>
+    <svg id="vis4" width="1200"></svg>
+
+    <div id="mapTooltip" class="hidden">
+      <p>
+        <span id="countyname"></span> County <br />
+        Total deaths: <span id="deaths"></span><br />
+      </p>
+    </div>
+
+    <div id="tooltip" class="hidden">
+      <p>
+        <span id="countyname_tooltip"></span> County <br />
+        <span id="prescriptions_tooltip"></span> prescriptions <br />
+        <span id="deaths_tooltip"></span> total deaths <br />
+      </p>
+    </div>
+
+    <div id="tooltipCityMap" class="hidden">
+
+      <p>
+        <span id="name"></span><br />
+
+        Population: <span id="pop"></span><br />
+      </p>
+    </div>
+
+    <br>
+    <br>
+    <br>
+    <hr>
+    <div>
+      <h3> Moving Forward </h3>
+      <p style="width:900px;">
+        Massachusetts has experienced an overall increase in the number of overdoses from 2000 to 2016; however, the data we have so far post 2016 suggests that overdoses are on the verge of a downward trend. Moreover, it appears that the urban cities in Eastern MA are suffering more than rural towns of Western MA. This suggests that opiate addiction is a more urban issue, perhaps due to the greater accessibility of opiates in more populous areas; it could also suggest that rural areas’ preventative and treatment programs are more effective. Both of these questions are in need of further exploration. Given the strong correlation between prescribed amounts and overdose rates, we should also consider limiting physicians’ abilities to prescribe so freely; in the words of Senator Ed Markey,
+        <br>
+        <br>
+
+
+<p>
+<img src="https://www.thenation.com/wp-content/uploads/2017/09/Teamsters-Opioid-Protest-ap-img.jpg" style="width:400px;height:250px;margin-right:600px;float:right"></img>
+
+“Given that 115 people die each day from an opioid overdose, including an overdose caused by prescription drugs, it is important that the FDA use its full authority to ensure prescription opioids are prescribed as intended, and patients and providers are well aware of the potential risks.”
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+Teamsters protest outside McKesson's shareholders meeting in Irving, Texas, on July 26, 2017. (AP Photo / LM Otero)
+
+</p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+To join the movement to combat the opiate epidemic, you can get involved with treatment programs <a href="https://dpt2.samhsa.gov/treatment/directory.aspx">local</a> to you.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    To find out how opioids are affecting your state, click <a href="https://www.drugabuse.gov/drugs-abuse/opioids/opioid-summaries-by-state">here.</a></p>
+
+      </p>
+    </div>
+    <script>
+
+
+
+
+    </script>
+</body>
+</html>
